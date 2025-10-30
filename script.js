@@ -1,12 +1,11 @@
 const covalentKey = "cqt_rQv3vG3MBFpVghJHB9vPJKXQCxc7";
-const dobbyKey = "key_4eHVoHhKpNbAteoG";
 
-// ✅ Use numeric chain IDs
+// ✅ Use numeric chain IDs — more reliable
 const chains = [
-  { name: "Ethereum", id: 1 },
-  { name: "Polygon", id: 137 },
-  { name: "Binance Smart Chain", id: 56 },
-  { name: "Base", id: 8453 }
+  { id: 1, name: "ETH-MAINNET" },
+  { id: 137, name: "MATIC-MAINNET" },
+  { id: 56, name: "BSC-MAINNET" },
+  { id: 8453, name: "BASE-MAINNET" },
 ];
 
 document.getElementById("analyze").addEventListener("click", async () => {
@@ -28,8 +27,13 @@ document.getElementById("analyze").addEventListener("click", async () => {
   let allTokens = [];
   let html = "";
 
+  // Using allorigins proxy (works better)
+  const proxy = "https://api.allorigins.win/raw?url=";
+
   for (const chain of chains) {
-    const url = `https://api.covalenthq.com/v1/${chain.id}/address/${address}/balances_v2/?key=${covalentKey}`;
+    const url = `${proxy}${encodeURIComponent(
+      `https://api.covalenthq.com/v1/${chain.id}/address/${address}/balances_v2/?key=${covalentKey}`
+    )}`;
 
     try {
       const res = await fetch(url);
@@ -37,11 +41,11 @@ document.getElementById("analyze").addEventListener("click", async () => {
 
       if (data?.data?.items?.length) {
         html += `<h3>${chain.name}</h3>`;
-        data.data.items.forEach(token => {
+        data.data.items.forEach((token) => {
           const balance = (token.balance / 10 ** token.contract_decimals).toFixed(4);
-          const symbol = token.contract_ticker_symbol;
+          const symbol = token.contract_ticker_symbol || "Unknown";
           const value = token.quote;
-          html += `<p>${symbol}: ${balance} (${value ? '$' + value.toFixed(2) : 'N/A'})</p>`;
+          html += `<p>${symbol}: ${balance} (${value ? "$" + value.toFixed(2) : "N/A"})</p>`;
           allTokens.push({ symbol, balance, value });
         });
       } else {
@@ -61,16 +65,18 @@ document.getElementById("analyze").addEventListener("click", async () => {
     aiSection.classList.remove("hidden");
     aiOutput.innerHTML = "🧠 Dobby is analyzing your portfolio...";
 
+    // Create a concise token summary for AI
     const tokenSummary = allTokens
       .slice(0, 10)
-      .map(t => `${t.symbol}: ${t.balance} ($${t.value ? t.value.toFixed(2) : 0})`)
+      .map((t) => `${t.symbol}: ${t.balance} ($${t.value ? t.value.toFixed(2) : 0})`)
       .join(", ");
 
+    // Example Dobby API endpoint
     const dobbyURL = "https://api.sentient.io/v1/dobby/chat";
 
     const dobbyPayload = {
-      input: `Analyze this portfolio: ${tokenSummary}.
-      Give clear, practical portfolio management advice: risk exposure, diversification, long-term stability, and which assets to add or reduce.`
+      input: `Analyze this crypto portfolio: ${tokenSummary}.
+      Provide a professional breakdown on risk management, diversification, and coins to add/avoid.`,
     };
 
     try {
@@ -78,16 +84,13 @@ document.getElementById("analyze").addEventListener("click", async () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${dobbyKey}`
+          Authorization: "Bearer YOUR_DOBBY_API_KEY", // replace with your real Dobby API key
         },
-        body: JSON.stringify(dobbyPayload)
+        body: JSON.stringify(dobbyPayload),
       });
 
       const dobbyData = await dobbyRes.json();
-      aiOutput.innerHTML =
-        dobbyData.output ||
-        dobbyData.message ||
-        "⚠️ Dobby couldn’t generate advice.";
+      aiOutput.innerHTML = dobbyData.output || "⚠️ Dobby couldn’t generate advice.";
     } catch (err) {
       aiOutput.innerHTML = "❌ Error connecting to Dobby API.";
       console.error(err);
