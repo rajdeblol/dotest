@@ -1,5 +1,5 @@
 body {
-  background: radial-gradient(circle at 50% 50%, #0a0a0a, #000);
+  background: #0a0a0a;
   color: #fff;
   font-family: "Poppins", sans-serif;
   display: flex;
@@ -12,11 +12,11 @@ body {
 .container {
   text-align: center;
   width: 90%;
-  max-width: 520px;
+  max-width: 500px;
   background: #111;
   padding: 30px;
-  border-radius: 18px;
-  box-shadow: 0 0 25px rgba(0, 255, 162, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0, 255, 162, 0.1);
 }
 
 h1 {
@@ -59,7 +59,7 @@ button:hover {
   background: #1a1a1a;
   padding: 15px;
   border-radius: 10px;
-  max-height: 350px;
+  max-height: 300px;
   overflow-y: auto;
 }
 
