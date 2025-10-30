@@ -9,8 +9,8 @@ export default async function handler(req, res) {
     }
 
     const prompt = `
-You are Dobby, Sentient's AI wallet analyst.
-Analyze this wallet and return **only valid JSON**:
+You are Dobby, Sentient's portfolio analyst.
+Analyze this wallet and return ONLY valid JSON:
 {
   "score": number (0-100),
   "personality": string,
@@ -18,10 +18,10 @@ Analyze this wallet and return **only valid JSON**:
 }
 Wallet Address: ${address}
 Chain: ${chain}
-Portfolio: ${JSON.stringify(balances?.slice(0, 8) || [])}
+Holdings: ${JSON.stringify(balances?.slice(0, 10) || [])}
 `;
 
-    // 🔹 Call Dobby API
+    // Call Dobby API
     const response = await fetch('https://api.sentient.ai/v1/dobby/reason', {
       method: 'POST',
       headers: {
@@ -32,6 +32,10 @@ Portfolio: ${JSON.stringify(balances?.slice(0, 8) || [])}
     });
 
     const text = await response.text();
-    console.log("Dobby raw response:", text);
+    console.log("Dobby raw:", text);
 
-    // If server returned HTML o
+    // If Dobby server failed
+    if (!response.ok || text.startsWith("A server")) {
+      console.warn("Dobby API failed, using fallback intelligence");
+      const fallback = smartWalletLogic(balances);
+      return res
