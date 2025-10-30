@@ -1,32 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sentient Portfolio Analyzer</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dobby Portfolio Analyzer</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>💎 Sentient Portfolio Analyzer</h1>
-    <p class="tagline">Check your Web3 holdings across multiple chains.</p>
+  <h1>💎 Dobby Portfolio Analyzer</h1>
 
-    <input 
-      type="text" 
-      id="wallet" 
-      placeholder="Enter your wallet address (0x...)" 
-      autocomplete="off"
-    >
+  <div class="input-box">
+    <input id="wallet" type="text" placeholder="Enter your wallet address..." />
     <button id="analyze">Analyze Portfolio</button>
-
-    <div id="loader" class="hidden">⏳ Fetching data...</div>
-    <div id="output"></div>
   </div>
 
-  <footer>
-    <p>Built with ❤️ using Covalent API + Sentient vibes.</p>
-  </footer>
+  <div id="loader" class="hidden">⏳ Fetching portfolio data...</div>
 
-  <script type="module" src="script.js"></script>
+  <div id="output"></div>
+
+  <div id="ai-section" class="hidden">
+    <h2>🤖 Dobby’s Portfolio Advice</h2>
+    <div id="ai-output"></div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
