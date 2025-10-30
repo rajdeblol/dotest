@@ -10,7 +10,8 @@ document.getElementById("analyze").addEventListener("click", async () => {
 
   let html = "";
   for (const chain of chains) {
-    const url = `https://api.covalenthq.com/v1/${chain}/address/${address}/balances_v2/?key=${apiKey}`;
+    const proxy = "https://corsproxy.io/?";
+    const url = `${proxy}https://api.covalenthq.com/v1/${chain}/address/${address}/balances_v2/?key=${apiKey}`;
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -25,9 +26,10 @@ document.getElementById("analyze").addEventListener("click", async () => {
         html += `<p>${chain.toUpperCase()}: No tokens found</p>`;
       }
     } catch (err) {
-      html += `<p>${chain.toUpperCase()}: Error fetching data</p>`;
+      html += `<p>${chain.toUpperCase()}: ❌ Error fetching data</p>`;
+      console.error(err);
     }
   }
 
-  output.innerHTML = html;
+  output.innerHTML = html || "No data found for any chain.";
 });
