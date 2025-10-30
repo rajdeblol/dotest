@@ -1,63 +1,93 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Dobby Wallet Intelligence</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dobby Wallet Analyzer</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Dobby Wallet Intelligence</h1>
-      <p class="lead">Paste your wallet address and let Dobby analyze your portfolio using Covalent + AI insights.</p>
-    </header>
+  <div class="container">
+    <h1>🔮 Dobby Wallet Analyzer</h1>
+    <p>Enter your wallet details to see your score, personality, and portfolio insights.</p>
 
-    <div class="card">
-      <label>Wallet Address</label>
-      <input id="address" type="text" placeholder="0x...">
-
-      <label>Chain</label>
+    <form id="walletForm">
+      <input type="text" id="address" placeholder="Enter wallet address" required />
       <select id="chain">
-        <option value="ethereum">Ethereum</option>
-        <option value="polygon">Polygon</option>
-        <option value="bsc">BSC</option>
+        <option value="eth-mainnet">Ethereum</option>
+        <option value="bsc-mainnet">BNB Chain</option>
+        <option value="matic-mainnet">Polygon</option>
+        <option value="base-mainnet">Base</option>
       </select>
+      <button type="submit">Analyze Wallet</button>
+    </form>
 
-      <button id="analyze">Analyze</button>
-      <div id="result"></div>
-    </div>
+    <div id="loading" class="hidden">Analyzing portfolio... ⏳</div>
+
+    <div id="result" class="result-box"></div>
   </div>
 
   <script>
-    const $ = id => document.getElementById(id);
+    const $ = (id) => document.getElementById(id);
 
-    $('analyze').addEventListener('click', async () => {
+    $('walletForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      $('loading').classList.remove('hidden');
+      $('result').innerHTML = '';
+
       const address = $('address').value.trim();
       const chain = $('chain').value;
-      if (!address) return alert('Enter wallet address');
-
-      $('result').innerHTML = 'Fetching...';
 
       try {
-        const cov = await fetch(`/api/covalent?address=${address}&chain=${chain}`).then(r=>r.json());
-        const dobby = await fetch('/api/dobby', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({address, chain, balances: cov.items})
-        }).then(r=>r.json());
+        // fetch balances from Covalent (public API)
+        const covalentRes = await fetch(`https://api.covalenthq.com/v1/${chain}/address/${address}/balances_v2/?key=ckey_docs`);
+        const covalentData = await covalentRes.json();
+
+        const balances = covalentData.data?.items || [];
+
+        // send to backend
+        const res = await fetch('/api/dobby', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address, chain, balances }),
+        });
+
+        const dobby = await res.json();
+
+        if (dobby.error) throw new Error(dobby.error);
 
         $('result').innerHTML = `
-          <h3>Score: ${dobby.score || '-'}/100</h3>
+          <h2>📊 Score: ${dobby.score || '-'} / 100</h2>
+          <div class="score-bar"><div class="fill" style="width:${dobby.score || 0}%;"></div></div>
           <p><strong>Personality:</strong> ${dobby.personality || '-'}</p>
-          <p><strong>Suggestions:</strong></p>
-          <ul>${(dobby.suggestions || []).map(s=>`<li>${s}</li>`).join('')}</ul>
+
+          ${dobby.holdings ? `
+          <div class="section">
+            <h3>Top Holdings</h3>
+            <ul>
+              ${dobby.holdings.map(h => `
+                <li><span>${h.symbol}</span> - $${h.value.toFixed(2)} (${h.share}%)</li>
+              `).join('')}
+            </ul>
+          </div>` : ''}
+
+          <div class="section">
+            <h3>Suggestions</h3>
+            <ul>${(dobby.suggestions || []).map(s => `<li>${s}</li>`).join('')}</ul>
+          </div>
+
+          ${dobby.recommendedTokens ? `
+          <div class="section">
+            <h3>Suggested Tokens to Explore</h3>
+            <p>${dobby.recommendedTokens.join(', ')}</p>
+          </div>` : ''}
         `;
-      } catch(e) {
-        $('result').innerHTML = 'Error: ' + e.message;
+      } catch (err) {
+        $('result').innerHTML = `<p class="error">❌ ${err.message}</p>`;
+      } finally {
+        $('loading').classList.add('hidden');
       }
     });
   </script>
 </body>
 </html>
-
