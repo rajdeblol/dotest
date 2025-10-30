@@ -1,5 +1,8 @@
+/* Global Reset & Layout */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  background: #0a0a0a;
+  background: radial-gradient(circle at 50% 50%, #0a0a0a, #000);
   color: #fff;
   font-family: "Poppins", sans-serif;
   display: flex;
@@ -9,62 +12,82 @@ body {
   margin: 0;
 }
 
+/* Container */
 .container {
   text-align: center;
   width: 90%;
-  max-width: 500px;
+  max-width: 520px;
   background: #111;
   padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(0, 255, 162, 0.1);
+  border-radius: 18px;
+  box-shadow: 0 0 25px rgba(0, 255, 162, 0.15);
 }
 
 h1 {
   color: #00ffa2;
+  margin-bottom: .5rem;
 }
 
+p {
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+/* Form Elements */
 input {
   width: 80%;
-  padding: 10px;
+  padding: 12px;
   border: none;
   border-radius: 8px;
   margin-top: 10px;
   font-size: 1rem;
+  outline: none;
 }
 
 button {
   background: #00ffa2;
   color: #000;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border-radius: 8px;
-  margin-top: 10px;
+  margin-top: 12px;
   cursor: pointer;
   font-weight: bold;
-  transition: 0.3s;
+  transition: background .3s;
 }
 
 button:hover {
   background: #00cc82;
 }
 
-.hidden {
-  display: none;
-}
-
-#output, #advice {
+/* Output Sections */
+#output, #ai-section {
   text-align: left;
   margin-top: 20px;
-  font-size: 0.9rem;
   background: #1a1a1a;
   padding: 15px;
   border-radius: 10px;
-  max-height: 300px;
+  max-height: 350px;
   overflow-y: auto;
+  font-size: .9rem;
 }
 
 #loader {
   margin-top: 15px;
   font-size: 1rem;
   color: #00ffa2;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Copy Button */
+.copy-btn {
+  background: transparent;
+  color: #00ffa2;
+  border: none;
+  cursor: pointer;
+  font-size: .8rem;
+  margin-left: 8px;
 }
