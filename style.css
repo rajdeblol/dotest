@@ -13,7 +13,7 @@ body {
 .container {
   text-align: center;
   width: 90%;
-  max-width: 500px;
+  max-width: 520px;
   background: #111;
   padding: 30px;
   border-radius: 16px;
@@ -74,6 +74,24 @@ button:hover {
   margin-top: 15px;
   font-size: 1rem;
   color: #00ffa2;
+}
+
+#ai-section {
+  margin-top: 30px;
+  background: #191919;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: left;
+}
+
+#ai-section h2 {
+  color: #00ffa2;
+  margin-bottom: 10px;
+}
+
+#ai-output {
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 footer {
