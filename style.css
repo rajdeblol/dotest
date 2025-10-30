@@ -1,69 +1,69 @@
 body {
-  background: #0a0a0a;
-  color: #fff;
-  font-family: 'Poppins', sans-serif;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-}
-
-.container {
+  background: radial-gradient(circle at top, #0d1117 0%, #000 100%);
+  color: #e6edf3;
+  font-family: "Inter", sans-serif;
   text-align: center;
-  width: 90%;
-  max-width: 500px;
-  background: #111;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(255,255,255,0.1);
+  margin: 0;
+  padding: 40px 10px;
 }
 
 h1 {
-  color: #00ffa2;
+  color: #58a6ff;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
 }
 
-.tagline {
-  font-size: 0.9rem;
-  opacity: 0.8;
-  margin-bottom: 20px;
+.input-box {
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 input {
-  width: 80%;
+  width: 60%;
+  max-width: 400px;
   padding: 10px;
+  border-radius: 10px;
   border: none;
-  border-radius: 8px;
-  margin-top: 10px;
-  font-size: 1rem;
+  outline: none;
+  background: #161b22;
+  color: white;
+  font-size: 16px;
+  box-shadow: 0 0 8px rgba(88, 166, 255, 0.3);
 }
 
 button {
-  background: #00ffa2;
-  color: #000;
-  border: none;
   padding: 10px 20px;
-  border-radius: 8px;
-  margin-top: 10px;
+  border-radius: 10px;
+  border: none;
+  background-color: #238636;
+  color: white;
   cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
+  font-size: 16px;
+  transition: 0.2s;
 }
 
 button:hover {
-  background: #00cc82;
+  background-color: #2ea043;
+  box-shadow: 0 0 10px rgba(46, 160, 67, 0.6);
 }
 
-#output {
+#output, #ai-section {
   text-align: left;
-  margin-top: 20px;
-  font-size: 0.9rem;
-  background: #1a1a1a;
-  padding: 15px;
-  border-radius: 10px;
-  max-height: 300px;
-  overflow-y: auto;
+  margin: 25px auto;
+  background: #161b22;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 0 15px rgba(88, 166, 255, 0.1);
+}
+
+h2 {
+  color: #00ffc8;
+  text-shadow: 0 0 8px rgba(0, 255, 200, 0.4);
 }
 
 .hidden {
@@ -73,11 +73,5 @@ button:hover {
 #loader {
   margin-top: 15px;
   font-size: 1rem;
-  color: #00ffa2;
-}
-
-footer {
-  margin-top: 20px;
-  opacity: 0.6;
-  font-size: 0.8rem;
+  color: #aaa;
 }
