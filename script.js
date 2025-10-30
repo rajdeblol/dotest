@@ -63,7 +63,10 @@ document.getElementById("analyze").addEventListener("click", async () => {
       const dobbyRes = await fetch("/api/dobby", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input: `Analyze this crypto portfolio: ${tokenSummary}. Give portfolio insights, diversification advice, and risk management suggestions.` })
+        body: JSON.stringify({
+          input: `Analyze this crypto portfolio: ${tokenSummary}.
+          Give a professional risk analysis, diversification advice, and suggest which coins to hold or reduce exposure to.`,
+        }),
       });
 
       const dobbyData = await dobbyRes.json();
