@@ -63,7 +63,8 @@ document.getElementById("analyze").addEventListener("click", async () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          input: `Analyze this crypto portfolio: ${tokenSummary}. Give me diversification, risk, and suggestion advice.`,
+          input: `Analyze this crypto portfolio: ${tokenSummary}. 
+          Give practical advice about diversification, risk exposure, and which tokens to consider adding or reducing.`,
         }),
       });
 
@@ -71,7 +72,7 @@ document.getElementById("analyze").addEventListener("click", async () => {
       aiOutput.innerHTML = data.output || "⚠️ Dobby couldn’t generate advice.";
     } catch (err) {
       aiOutput.innerHTML = "❌ Error connecting to Dobby API.";
-      console.error("Dobby error:", err);
+      console.error("Dobby API error:", err);
     }
   }
 });
