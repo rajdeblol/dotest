@@ -20,8 +20,8 @@ export default async function handler(req, res) {
     const data = await dobbyRes.json();
     return res.status(200).json(data);
   } catch (err) {
-    console.error("Dobby API Error:", err);
-    res.status(500).json({ error: "Failed to reach Dobby API" });
+    console.error("Dobby API error:", err);
+    res.status(500).json({ error: "Failed to connect to Dobby API" });
   }
 }
 
