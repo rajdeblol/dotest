@@ -2,32 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dobby Portfolio Sensei 🧠</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentient Portfolio Analyzer</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="container">
-    <h1>Dobby Portfolio Sensei 🧠</h1>
-    <p>Enter your Ethereum wallet to see how Dobby rates your portfolio.</p>
-    
-    <input type="text" id="wallet" placeholder="0xYourWalletAddress">
-    
-    <div class="mode">
-      <label>
-        <input type="checkbox" id="roastMode">
-        Roast Mode 🔥
-      </label>
-    </div>
-    
-    <button onclick="analyzePortfolio()">Analyze Portfolio</button>
-    <div id="loading"></div>
-
-    <canvas id="portfolioChart" width="300" height="300"></canvas>
-
-    <div id="result"></div>
+    <h1>💎 Sentient Portfolio Analyzer</h1>
+    <input type="text" id="wallet" placeholder="Enter your wallet address">
+    <button id="analyze">Analyze Portfolio</button>
+    <div id="output"></div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
