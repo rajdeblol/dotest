@@ -23,17 +23,10 @@ body {
   box-shadow: 0 0 25px rgba(0, 255, 162, 0.15);
 }
 
-h1 {
-  color: #00ffa2;
-  margin-bottom: .5rem;
-}
+h1 { color: #00ffa2; margin-bottom: .5rem; }
+p  { margin-bottom: 1rem; color:#ccc; }
 
-p {
-  margin-bottom: 1rem;
-  color: #ccc;
-}
-
-/* Form Elements */
+/* Form */
 input {
   width: 80%;
   padding: 12px;
@@ -43,7 +36,6 @@ input {
   font-size: 1rem;
   outline: none;
 }
-
 button {
   background: #00ffa2;
   color: #000;
@@ -55,12 +47,9 @@ button {
   font-weight: bold;
   transition: background .3s;
 }
+button:hover { background: #00cc82; }
 
-button:hover {
-  background: #00cc82;
-}
-
-/* Output Sections */
+/* Output */
 #output, #ai-section {
   text-align: left;
   margin-top: 20px;
@@ -71,23 +60,15 @@ button:hover {
   overflow-y: auto;
   font-size: .9rem;
 }
+#loader { margin-top: 15px; font-size: 1rem; color:#00ffa2; }
+.hidden { display:none; }
 
-#loader {
-  margin-top: 15px;
-  font-size: 1rem;
-  color: #00ffa2;
-}
-
-.hidden {
-  display: none;
-}
-
-/* Copy Button */
+/* Copy button */
 .copy-btn {
-  background: transparent;
-  color: #00ffa2;
-  border: none;
-  cursor: pointer;
-  font-size: .8rem;
-  margin-left: 8px;
+  background:transparent;
+  color:#00ffa2;
+  border:none;
+  cursor:pointer;
+  font-size:.8rem;
+  margin-left:8px;
 }
