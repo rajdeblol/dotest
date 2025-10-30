@@ -4,57 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dobby Portfolio Advisor</title>
-  <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      padding: 30px;
-      background: linear-gradient(135deg, #0e0e10, #1b1b1f);
-      color: #e4e4e4;
-      text-align: center;
-    }
-    input {
-      padding: 10px;
-      width: 300px;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-    }
-    button {
-      padding: 10px 15px;
-      border: none;
-      background: #5b3df5;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #7a5cff;
-    }
-    #output, #ai-section {
-      margin-top: 20px;
-      background: #1e1e25;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: left;
-    }
-    #loader { margin-top: 10px; color: #aaa; }
-    .hidden { display: none; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h2>💼 Dobby Portfolio Advisor</h2>
-  <p>Enter your wallet address and get instant portfolio insights from Dobby.</p>
+  <div class="container">
+    <h1>Dobby Portfolio Advisor</h1>
+    <p>Enter your wallet address and get instant portfolio insights from Dobby.</p>
 
-  <input id="wallet" type="text" placeholder="0x123..." />
-  <button id="analyze">Analyze Portfolio</button>
+    <input id="wallet" type="text" placeholder="0x123..." />
+    <button id="analyze">Analyze Portfolio</button>
 
-  <div id="loader" class="hidden">⏳ Fetching data...</div>
-  <div id="output"></div>
+    <div id="loader" class="hidden">Fetching data...</div>
+    <div id="output"></div>
 
-  <div id="ai-section" class="hidden">
-    <h3>🤖 Dobby’s Portfolio Advice</h3>
-    <p id="ai-output"></p>
+    <div id="ai-section" class="hidden">
+      <h3>Dobby’s Portfolio Advice</h3>
+      <p id="ai-output"></p>
+    </div>
   </div>
 
   <script src="script.js"></script>
