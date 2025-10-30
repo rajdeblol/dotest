@@ -1,9 +1,4 @@
-// Configuration
-const covalentKey = "cqt_rQv3vG3MBFpVghJHB9vPJKXQCxc7";
-const chains = ["eth-mainnet", "matic-mainnet", "bsc-mainnet", "base-mainnet"];
-const corsProxy = "https://corsproxy.io/?";
-
-// DOM Elements
+// script.js
 const $ = id => document.getElementById(id);
 const addressInput = $("wallet");
 const analyzeBtn   = $("analyze");
@@ -12,16 +7,12 @@ const aiSection    = $("ai-section");
 const aiOutput     = $("ai-output");
 const loader       = $("loader");
 
-// Debounce helper
-const debounce = (fn, delay = 300) => {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), delay);
-  };
+// ---- debounce (optional but nice) ----
+const debounce = (fn, wait = 300) => {
+  let t;
+  return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), wait); };
 };
 
-// Main handler
 analyzeBtn.addEventListener("click", debounce(async () => {
   const address = addressInput.value.trim();
   if (!address) {
@@ -29,92 +20,64 @@ analyzeBtn.addEventListener("click", debounce(async () => {
     return;
   }
 
-  // Reset UI
+  // UI reset
   loader.classList.remove("hidden");
   outputDiv.innerHTML = "";
   aiSection.classList.add("hidden");
 
-  const allTokens = [];
-  let html = "";
+  try {
+    const resp = await fetch("/api/portfolio", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ address })
+    });
 
-  // Fetch from Covalent
-  for (const chain of chains) {
-    const url = `${corsProxy}https://api.covalenthq.com/v1/${chain}/address/${address}/balances_v2/?key=${covalentKey}`;
+    if (!resp.ok) throw new Error(`Server ${resp.status}`);
 
-    try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+    const { html, allTokens } = await resp.json();
 
-      if (data?.data?.items?.length) {
-        html += `<h4>${chain.toUpperCase()}</h4>`;
-        data.data.items.forEach(token => {
-          const balance = (token.balance / 10 ** token.contract_decimals).toFixed(4);
-          const symbol  = token.contract_ticker_symbol || "UNKNOWN";
-          const value   = token.quote ?? null;
+    loader.classList.add("hidden");
+    outputDiv.innerHTML = html || "No data found.";
 
-          html += `<p>
-            <strong>${symbol}</strong>: ${balance}
-            ${value ? `($${value.toFixed(2)})` : "(no price)"}
-            <button class="copy-btn" title="Copy symbol" data-clip="${symbol}">Copy</button>
-          </p>`;
+    // ---- Dobby AI (unchanged) ----
+    if (allTokens?.length) {
+      aiSection.classList.remove("hidden");
+      aiOutput.innerHTML = "Dobby is analyzing…";
 
-          allTokens.push({ symbol, balance: +balance, value });
-        });
-      } else {
-        html += `<p>${chain.toUpperCase()}: No tokens found</p>`;
-      }
-    } catch (err) {
-      html += `<p>${chain.toUpperCase()}: Error fetching data</p>`;
-      console.error(err);
-    }
-  }
+      const summary = allTokens
+        .slice(0, 15)
+        .map(t => `${t.symbol}: ${t.balance} ($${t.value?.toFixed(2) ?? 0})`)
+        .join(", ");
 
-  // Render results
-  loader.classList.add("hidden");
-  outputDiv.innerHTML = html || "No data found.";
-
-  // Dobby AI Analysis
-  if (allTokens.length) {
-    aiSection.classList.remove("hidden");
-    aiOutput.innerHTML = "Dobby is analyzing your portfolio...";
-
-    const tokenSummary = allTokens
-      .slice(0, 15)
-      .map(t => `${t.symbol}: ${t.balance} ($${t.value?.toFixed(2) ?? 0})`)
-      .join(", ");
-
-    try {
-      const dobbyRes = await fetch("/api/dobby", {
+      const dobbyResp = await fetch("/api/dobby", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          input: `Analyze this crypto portfolio: ${tokenSummary}.
-                  Provide a professional risk analysis, diversification advice,
+          input: `Analyze this crypto portfolio: ${summary}.
+                  Give a professional risk analysis, diversification advice,
                   and suggest which coins to hold or reduce exposure to.`
         })
       });
 
-      if (!dobbyRes.ok) throw new Error(`HTTP ${dobbyRes.status}`);
-      const dobbyData = await dobbyRes.json();
-
-      aiOutput.innerHTML = dobbyData.output
-        ? dobbyData.output.replace(/\n/g, "<br>")
-        : "Dobby couldn’t generate advice.";
-    } catch (err) {
-      aiOutput.innerHTML = "Error connecting to Dobby API.";
-      console.error(err);
+      const dobby = await dobbyResp.json();
+      aiOutput.innerHTML = dobby.output?.replace(/\n/g, "<br>") ||
+                           "Dobby couldn’t generate advice.";
     }
+  } catch (err) {
+    loader.classList.add("hidden");
+    outputDiv.innerHTML = `Error: ${err.message}`;
+    console.error(err);
   }
 }));
 
-// Copy to clipboard for token symbols
+// ---- copy-to-clipboard for token symbols ----
 document.addEventListener("click", e => {
   if (e.target.classList.contains("copy-btn")) {
-    const text = e.target.dataset.clip;
-    navigator.clipboard.writeText(text).then(() => {
+    const txt = e.target.dataset.clip;
+    navigator.clipboard.writeText(txt).then(() => {
+      const old = e.target.textContent;
       e.target.textContent = "Copied!";
-      setTimeout(() => e.target.textContent = "Copy", 1500);
+      setTimeout(() => e.target.textContent = old, 1500);
     });
   }
 });
