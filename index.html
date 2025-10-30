@@ -1,28 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dobby Portfolio Analyzer</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dobby Wallet Intelligence</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>💎 Dobby Portfolio Analyzer</h1>
+  <div class="wrap">
+    <header>
+      <h1>Dobby Wallet Intelligence</h1>
+      <p class="lead">Paste your wallet address and let Dobby analyze your portfolio using Covalent + AI insights.</p>
+    </header>
 
-  <div class="input-box">
-    <input id="wallet" type="text" placeholder="Enter your wallet address..." />
-    <button id="analyze">Analyze Portfolio</button>
+    <div class="card">
+      <label>Wallet Address</label>
+      <input id="address" type="text" placeholder="0x...">
+
+      <label>Chain</label>
+      <select id="chain">
+        <option value="ethereum">Ethereum</option>
+        <option value="polygon">Polygon</option>
+        <option value="bsc">BSC</option>
+      </select>
+
+      <button id="analyze">Analyze</button>
+      <div id="result"></div>
+    </div>
   </div>
 
-  <div id="loader" class="hidden">⏳ Fetching portfolio data...</div>
+  <script>
+    const $ = id => document.getElementById(id);
 
-  <div id="output"></div>
+    $('analyze').addEventListener('click', async () => {
+      const address = $('address').value.trim();
+      const chain = $('chain').value;
+      if (!address) return alert('Enter wallet address');
 
-  <div id="ai-section" class="hidden">
-    <h2>🤖 Dobby’s Portfolio Advice</h2>
-    <div id="ai-output"></div>
-  </div>
+      $('result').innerHTML = 'Fetching...';
 
-  <script src="script.js"></script>
+      try {
+        const cov = await fetch(`/api/covalent?address=${address}&chain=${chain}`).then(r=>r.json());
+        const dobby = await fetch('/api/dobby', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({address, chain, balances: cov.items})
+        }).then(r=>r.json());
+
+        $('result').innerHTML = `
+          <h3>Score: ${dobby.score || '-'}/100</h3>
+          <p><strong>Personality:</strong> ${dobby.personality || '-'}</p>
+          <p><strong>Suggestions:</strong></p>
+          <ul>${(dobby.suggestions || []).map(s=>`<li>${s}</li>`).join('')}</ul>
+        `;
+      } catch(e) {
+        $('result').innerHTML = 'Error: ' + e.message;
+      }
+    });
+  </script>
 </body>
 </html>
+
