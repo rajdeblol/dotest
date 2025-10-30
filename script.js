@@ -72,7 +72,8 @@ document.getElementById("analyze").addEventListener("click", async () => {
       .join(", ");
 
     // Example Dobby API endpoint
-    const dobbyURL = "https://api.sentient.io/v1/dobby/chat";
+    const dobbyURL =  "/api/dobby";
+
 
     const dobbyPayload = {
       input: `Analyze this crypto portfolio: ${tokenSummary}.
