@@ -2,26 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dobby Portfolio Advisor</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Dobby Portfolio Advisor</h1>
-    <p>Enter your wallet address and get instant portfolio insights from Dobby.</p>
+    <header>
+      <h1>Dobby Portfolio Advisor</h1>
+      <p>Enter any EVM wallet to get instant insights + AI advice.</p>
+    </header>
 
-    <input id="wallet" type="text" placeholder="0x123..." />
-    <button id="analyze">Analyze Portfolio</button>
+    <div class="input-group">
+      <input id="wallet" type="text" placeholder="0x..." />
+      <button id="analyze">Analyze</button>
+    </div>
 
-    <div id="loader" class="hidden">Fetching data...</div>
+    <div id="loader" class="loader hidden">
+      <div class="spinner"></div>
+      <p>Fetching portfolio data...</p>
+    </div>
+
     <div id="output"></div>
 
-    <div id="ai-section" class="hidden">
-      <h3>Dobby’s Portfolio Advice</h3>
-      <p id="ai-output"></p>
+    <div id="ai-section" class="card hidden">
+      <h3>Dobby’s AI Advice</h3>
+      <div id="ai-output"></div>
     </div>
+
+    <footer>
+      <p>Powered by <a href="https://covalenthq.com" target="_blank">Covalent</a> + Vercel</p>
+    </footer>
   </div>
 
   <script src="script.js"></script>
