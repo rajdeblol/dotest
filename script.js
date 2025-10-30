@@ -1,5 +1,6 @@
 const covalentKey = "cqt_rQv3vG3MBFpVghJHB9vPJKXQCxc7";
 const chains = ["eth-mainnet", "matic-mainnet", "bsc-mainnet", "base-mainnet"];
+const dobbyKey = "key_4eHVoHhKpNbAteoG";
 
 document.getElementById("analyze").addEventListener("click", async () => {
   const address = document.getElementById("wallet").value.trim();
@@ -59,21 +60,37 @@ document.getElementById("analyze").addEventListener("click", async () => {
       .map(t => `${t.symbol}: ${t.balance} ($${t.value ? t.value.toFixed(2) : 0})`)
       .join(", ");
 
+    const dobbyURL = "https://api.sentient.io/v1/dobby/chat";
+
+    const dobbyPayload = {
+      input: `You are a crypto portfolio expert AI. Analyze this portfolio: ${tokenSummary}.
+      Give detailed advice on risk management, diversification, long-term stability, and which assets to add or rebalance.`
+    };
+
     try {
-      const dobbyRes = await fetch("/api/dobby", {
+      const dobbyRes = await fetch(dobbyURL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          input: `Analyze this crypto portfolio: ${tokenSummary}.
-          Give a professional risk analysis, diversification advice, and suggest which coins to hold or reduce exposure to.`,
-        }),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + dobbyKey,
+        },
+        body: JSON.stringify(dobbyPayload)
       });
 
       const dobbyData = await dobbyRes.json();
-      aiOutput.innerHTML = dobbyData.output || "⚠️ Dobby couldn’t generate advice.";
+      console.log("Dobby Response:", dobbyData);
+
+      const reply =
+        dobbyData.output ||
+        dobbyData.message ||
+        dobbyData.reply ||
+        dobbyData.result ||
+        "⚠️ Dobby couldn’t generate advice.";
+
+      aiOutput.innerHTML = reply;
     } catch (err) {
       aiOutput.innerHTML = "❌ Error connecting to Dobby API.";
-      console.error(err);
+      console.error("Dobby API Error:", err);
     }
   }
 });
