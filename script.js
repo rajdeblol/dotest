@@ -1,4 +1,3 @@
-const covalentKey = "cqt_rQv3vG3MBFpVghJHB9vPJKXQCxc7";
 const chains = ["eth-mainnet", "matic-mainnet", "bsc-mainnet", "base-mainnet"];
 
 document.getElementById("analyze").addEventListener("click", async () => {
@@ -17,62 +16,55 @@ document.getElementById("analyze").addEventListener("click", async () => {
   output.innerHTML = "";
   aiSection.classList.add("hidden");
 
-  let allTokens = [];
-  let html = "";
+  try {
+    const res = await fetch("/api/fetchPortfolio", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ address }),
+    });
 
-  for (const chain of chains) {
-    const proxy = "https://corsproxy.io/?";
-    const url = `${proxy}https://api.covalenthq.com/v1/${chain}/address/${address}/balances_v2/?key=${covalentKey}`;
+    const { portfolio } = await res.json();
 
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (data?.data?.items?.length) {
-        html += `<h3>${chain.toUpperCase()}</h3>`;
-        data.data.items.forEach((token) => {
-          const balance = (token.balance / 10 ** token.contract_decimals).toFixed(4);
-          const symbol = token.contract_ticker_symbol;
-          const value = token.quote;
-          html += `<p>${symbol}: ${balance} (${value ? "$" + value.toFixed(2) : "N/A"})</p>`;
-          allTokens.push({ symbol, balance, value });
-        });
-      } else {
-        html += `<p>${chain.toUpperCase()}: No tokens found</p>`;
-      }
-    } catch (err) {
-      html += `<p>${chain.toUpperCase()}: ❌ Error fetching data</p>`;
-      console.error(err);
+    if (!portfolio || portfolio.length === 0) {
+      output.innerHTML = "No tokens found.";
+      loader.classList.add("hidden");
+      return;
     }
-  }
 
-  loader.classList.add("hidden");
-  output.innerHTML = html || "No data found.";
+    let html = "";
+    portfolio.forEach(({ chain, tokens }) => {
+      html += `<h3>${chain.toUpperCase()}</h3>`;
+      tokens.forEach(t => {
+        html += `<p>${t.symbol}: ${t.balance} ($${t.value})</p>`;
+      });
+    });
 
-  if (allTokens.length > 0) {
+    loader.classList.add("hidden");
+    output.innerHTML = html;
+
+    // AI section
     aiSection.classList.remove("hidden");
     aiOutput.innerHTML = "🧠 Dobby is analyzing your portfolio...";
 
-    const tokenSummary = allTokens
+    const summary = portfolio
+      .flatMap(p => p.tokens.map(t => `${t.symbol}: ${t.balance} ($${t.value})`))
       .slice(0, 10)
-      .map((t) => `${t.symbol}: ${t.balance} ($${t.value ? t.value.toFixed(2) : 0})`)
       .join(", ");
 
-    try {
-      const res = await fetch("/api/dobby", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          input: `Analyze this crypto portfolio: ${tokenSummary}. 
-          Give practical advice about diversification, risk exposure, and which tokens to consider adding or reducing.`,
-        }),
-      });
+    const aiRes = await fetch("/api/dobby", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        input: `Analyze this crypto portfolio: ${summary}. 
+        Give a short, practical summary about diversification, risk, and improvements.`,
+      }),
+    });
 
-      const data = await res.json();
-      aiOutput.innerHTML = data.output || "⚠️ Dobby couldn’t generate advice.";
-    } catch (err) {
-      aiOutput.innerHTML = "❌ Error connecting to Dobby API.";
-      console.error("Dobby API error:", err);
-    }
+    const data = await aiRes.json();
+    aiOutput.innerHTML = data.output || "⚠️ Dobby couldn’t generate advice.";
+  } catch (err) {
+    console.error(err);
+    output.innerHTML = "❌ Error fetching data.";
+    loader.classList.add("hidden");
   }
 });
