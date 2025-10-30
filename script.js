@@ -1,4 +1,4 @@
-cconst covalentKey = "cqt_rQv3vG3MBFpVghJHB9vPJKXQCxc7";
+const covalentKey = "cqt_rQv3vG3MBFpVghJHB9vPJKXQCxc7";
 const chains = ["eth-mainnet", "matic-mainnet", "bsc-mainnet", "base-mainnet"];
 
 document.getElementById("analyze").addEventListener("click", async () => {
